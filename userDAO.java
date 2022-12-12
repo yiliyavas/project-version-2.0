@@ -331,7 +331,8 @@ public class userDAO
 						"price DOUBLE, " + 
 						"PRIMARY KEY(listid), " + 
 						"FOREIGN KEY(owner) REFERENCES User(email), " + 
-						"FOREIGN KEY(nftid) REFERENCES NFTS(nftid) " + ");")
+						"FOREIGN KEY(nftid) REFERENCES NFTS(nftid) " + ");"),
+				 
 		        
 				};
 String[] TUPLES = {("insert into User(email, firstName, lastName, password, birthday, adress_street_num, adress_street, adress_city, adress_state, adress_zip_code, cash_bal, PPS_bal)"+
@@ -798,8 +799,60 @@ String[] TUPLES = {("insert into User(email, firstName, lastName, password, birt
 		return listings;
 	}
     
+    public List<user> bigCreators() throws SQLException{
+    	List<user> bC = new ArrayList<user>();
+    	
+    	String sql = "SELECT creator FROM NFTs GROUP BY creator ORDER BY COUNT(*) LIMIT 1";
+    	
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet results = statement.executeQuery(sql);
+    	
+    	while (results.next()) {
+    		user user = new user();
+    		
+    		user.email = results.getString("");
+    	}
+    	results.close();
+		disconnect();
+    	return bC;
+    }
     
+    public List<user> bigSellers() throws SQLException{
+    	List<user> bS = new ArrayList<user>();
+    	
+    	String sql = "SELECT previousOwner FROM Transactions GROUP BY previousOwner ORDER BY COUNT(*) LIMIT 1";
+    	
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet results = statement.executeQuery(sql);
+    	
+    	while (results.next()) {
+    		user user = new user();
+    		
+    		user.email = results.getString("");
+    	}
+    	results.close();
+		disconnect();
+    	return bS;
+    }
     
-
-
+    public List<user> bigBuyers() throws SQLException{
+    	List<user> bB = new ArrayList<user>();
+    	
+    	String sql = "SELECT newOwner FROM Transactions GROUP BY newOwner ORDER BY COUNT(*) LIMIT 1";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet results = statement.executeQuery(sql);
+    	
+    	while (results.next()) {
+    		user user = new user();
+    		
+    		user.email = results.getString("");
+    	}
+    	results.close();
+		disconnect();
+    	return bB;
+    }
+  
 }
