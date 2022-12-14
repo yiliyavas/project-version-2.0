@@ -1,0 +1,27 @@
+SELECT creator as BigCreator FROM nft GROUP BY creator ORDER BY count(creator) DESC Limit 1;  
+  
+SELECT previousOwner as BigSeller FROM transactions GROUP BY previousOwner ORDER BY count(previousOwner) DESC limit 1;
+
+SELECT newOwner AS BigBuyer FROM transactions GROUP BY newOwner ORDER BY count(newOwner) DESC limit 1;    
+
+SELECT nftid as HotNFTs FROM listing GROUP BY nftid ORDER BY count(nftid) DESC Limit 1;
+
+SELECT newOwner as GoodBuyers FROM transactions Where newOwner in   
+(select newOwner from transactions group by newOwner having count(newOwner) > 2) Limit 1;
+
+select newOwner AS DiamonHANDS from transactions where not exists(select 1  from transactions previousOwner);
+
+SELECT newOwner as PaperHands FROM transactions Where newOwner in    
+(select newOwner from transactions group by newOwner having count(newOwner) > 2) UNION
+(select newOwner from transactions group by newOwner having count(previousOwner) > 2);
+
+Select email as InactiveUsers From User Where Not Exists( ( Select 1 From transactions, nft, listing  
+Where (User.email = transactions.previousOwner) ) UNION ( ( Select 1 From transactions, nft, listing  
+Where (User.email = transactions.newOwner) )) UNION ( ( Select 1 From transactions, nft, listing  
+Where (User.email = listing.owners) ))	);
+
+
+-- common nfts 
+select nftid as CommonNFT from transactions t where (t.previousOwner = 'susie@gmail.com') and nftid in
+(select nftid from transactions t where t.previousOwner = 'sophie@gmail.com');
+
